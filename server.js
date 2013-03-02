@@ -2,17 +2,22 @@
 var connect = require('connect')
     , express = require('express')
     , io = require('socket.io')
+    , multipart = require('multipart')
+    , sys = require('sys')
     , port = (process.env.PORT || 8081);
 
 //Setup Express
 var server = express.createServer();
 server.configure(function(){
     server.set('views', __dirname + '/views');
-    server.set('view options', { layout: false });
+    server.set('view options', { layout: true });
+    var multipart = require('multipart');
+    var sys = require('sys');
     server.use(connect.bodyParser());
     server.use(express.cookieParser());
     server.use(express.session({ secret: "shhhhhhhhh!"}));
     server.use(connect.static(__dirname + '/static'));
+
     server.use(server.router);
 });
 
@@ -58,7 +63,7 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
 
 server.get('/', function(req,res){
-  res.render('index.jade', {
+  res.render('form.jade', {
     locals : { 
               title : 'Your Page Title'
              ,description: 'Your Page Description'
@@ -66,6 +71,24 @@ server.get('/', function(req,res){
              ,analyticssiteid: 'XXXXXXX' 
             }
   });
+});
+server.post('/upload', function(req,res){
+    req.setBodyEncoding('binary'); // Переключаемся в бинарный режим
+    console.log("upload data received");
+    console.log(req.body);
+    console.log(req.files);
+    /*console.log("body");
+    console.log(req.body);
+    console.log("files");
+    console.log(req.files);
+    console.log(req);  */
+    //res.ondata(function(data){console.log(data)});
+    //res.send(req.body);
+
+});
+server.post('/', function(req,res){
+    res.send(req.body);
+
 });
 
 
